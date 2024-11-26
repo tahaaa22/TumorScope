@@ -1,4 +1,4 @@
-from pyqtgraph import PlotWidget
+from pyqtgraph import ImageView
 #import resources_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -254,7 +254,10 @@ class Analysis(object):
         self.frame_3.setObjectName("frame_3")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.frame_3)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.loaded_image = PlotWidget(self.frame_3)
+        self.loaded_image = ImageView(self.frame_3)
+        self.loaded_image.ui.roiBtn.hide()  
+        self.loaded_image.ui.menuBtn.hide()  
+        self.loaded_image.ui.histogram.hide()
         self.loaded_image.setMinimumSize(QtCore.QSize(400, 350))
         self.loaded_image.setObjectName("loaded_image")
         self.verticalLayout_6.addWidget(self.loaded_image)
@@ -290,7 +293,10 @@ class Analysis(object):
         self.frame_12.setObjectName("frame_12")
         self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.frame_12)
         self.verticalLayout_17.setObjectName("verticalLayout_17")
-        self.segmented_image = PlotWidget(self.frame_12)
+        self.segmented_image = ImageView(self.frame_12)
+        self.segmented_image.ui.roiBtn.hide()  
+        self.segmented_image.ui.menuBtn.hide()  
+        self.segmented_image.ui.histogram.hide()
         self.segmented_image.setMinimumSize(QtCore.QSize(400, 350))
         self.segmented_image.setObjectName("segmented_image")
         self.verticalLayout_17.addWidget(self.segmented_image)
@@ -318,7 +324,10 @@ class Analysis(object):
         self.detect_label.setObjectName("detect_label")
         self.horizontalLayout_7.addWidget(self.detect_label)
         self.verticalLayout_2.addWidget(self.frame)
-        self.detected_image = PlotWidget(self.mainframe)
+        self.detected_image = ImageView(self.mainframe)
+        self.detected_image.ui.roiBtn.hide()  
+        self.detected_image.ui.menuBtn.hide() 
+        self.detected_image.ui.histogram.hide() 
         self.detected_image.setMinimumSize(QtCore.QSize(400, 200))
         self.detected_image.setObjectName("detected_image")
         self.verticalLayout_2.addWidget(self.detected_image)

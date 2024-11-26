@@ -1,4 +1,4 @@
-from pyqtgraph import PlotWidget
+from pyqtgraph import ImageView
 #import resources_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -238,7 +238,10 @@ class Decompression(object):
         self.frame_3.setObjectName("frame_3")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.frame_3)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.normal_image = PlotWidget(self.frame_3)
+        self.normal_image = ImageView(self.frame_3)
+        self.normal_image.ui.roiBtn.hide()
+        self.normal_image.ui.menuBtn.hide()
+        self.normal_image.ui.histogram.hide()
         self.normal_image.setMinimumSize(QtCore.QSize(400, 400))
         self.normal_image.setObjectName("normal_image")
         self.verticalLayout_6.addWidget(self.normal_image)
@@ -301,7 +304,10 @@ class Decompression(object):
         self.frame_12.setObjectName("frame_12")
         self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.frame_12)
         self.verticalLayout_17.setObjectName("verticalLayout_17")
-        self.dicom_image = PlotWidget(self.frame_12)
+        self.dicom_image = ImageView(self.frame_12)
+        self.dicom_image.ui.roiBtn.hide()
+        self.dicom_image.ui.menuBtn.hide()
+        self.dicom_image.ui.histogram.hide()
         self.dicom_image.setMinimumSize(QtCore.QSize(400, 400))
         self.dicom_image.setObjectName("dicom_image")
         self.verticalLayout_17.addWidget(self.dicom_image)
