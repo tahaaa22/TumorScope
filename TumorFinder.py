@@ -1,5 +1,5 @@
 class TumorFinder:
-    def __init__(self, ui = None):
+    def __init__(self, ui):
         self.UI = ui
         print("TumorFinder initialized")
 
