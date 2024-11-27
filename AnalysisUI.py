@@ -1,7 +1,6 @@
 from pyqtgraph import ImageView
 #import resources_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QMessageBox,  QPushButton
 import sys
 from TumorFinder import TumorFinder
 
