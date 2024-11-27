@@ -5,11 +5,14 @@ from CompressUI import Compression
 from AnalysisUI import Analysis
 
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.current_layout = None
         self.setupUi("Decompression")
+        
+             
         
 
     def setupUi(self, layout_name):
@@ -36,6 +39,8 @@ class MainWindow(QMainWindow):
         self.centralWidget().deleteLater() 
         self.setupUi(layout_name)
         self.adjustSize()
+
+   
         
 
 if __name__ == "__main__":

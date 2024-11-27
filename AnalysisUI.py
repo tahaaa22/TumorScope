@@ -1,6 +1,9 @@
 from pyqtgraph import ImageView
 #import resources_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog, QMessageBox,  QPushButton
+import cv2
+import numpy as np
 
 is_hidden = False
 
@@ -23,15 +26,15 @@ class Analysis(object):
 "color:#000;\n"
 "border:none;\n"
 "}\n"
-"#load_button, #process_button {\n"
+"#process_button, #load_button {\n"
 "    background-color: #3498db;  /* Default button color */\n"
 "    color: white;\n"
 "    border-radius: 5px;\n"
 "}\n"
-"#process_button:hover {\n"
+"#load_button:hover {\n"
 "    background-color: #2980b9;  /* Button color on hover */\n"
 "}\n"
-"#load_button:hover {\n"
+"#process_button:hover {\n"
 "    background-color: #2980b9;  /* Button color on hover */\n"
 "}\n"
 "\n"
@@ -44,7 +47,7 @@ class Analysis(object):
 "background-color:#eff9fe;\n"
 "border-color: rgb(0, 255, 255);\n"
 "}\n"
-"#analysis_button, #compress_button,#load_button, #process_button, #decompress_button, #confirmButton{\n"
+"#analysis_button, #compress_button,#process_button, #load_button, #decompress_button, #confirmButton{\n"
 "padding:10px 5px;\n"
 "text-align:left;\n"
 "font: 18px;\n"
@@ -96,7 +99,7 @@ class Analysis(object):
 "color:#2596be;\n"
 "}\n"
 "\n"
-"#SearchFrame, #load_button, #process_button, #menu_button{\n"
+"#SearchFrame, #process_button, #load_button, #menu_button{\n"
 "border-radius: 10px;\n"
 "border: 2px solid #2596be;\n"
 "}")
@@ -335,12 +338,12 @@ class Analysis(object):
         self.widget.setObjectName("widget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.process_button = QtWidgets.QPushButton(self.widget)
-        self.process_button.setObjectName("process_button")
-        self.horizontalLayout_3.addWidget(self.process_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         self.load_button = QtWidgets.QPushButton(self.widget)
         self.load_button.setObjectName("load_button")
         self.horizontalLayout_3.addWidget(self.load_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
+        self.process_button = QtWidgets.QPushButton(self.widget)
+        self.process_button.setObjectName("process_button")
+        self.horizontalLayout_3.addWidget(self.process_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         self.verticalLayout_2.addWidget(self.widget)
         self.verticalLayout.addWidget(self.mainframe)
         self.horizontalLayout.addWidget(self.rightmenu)
@@ -363,8 +366,102 @@ class Analysis(object):
         self.EMGlabel.setText(_translate("MainWindow", "Loaded Image"))
         self.filterflex.setText(_translate("MainWindow", "Segmented Image"))
         self.detect_label.setText(_translate("MainWindow", "Detected Tumors"))
-        self.process_button.setText(_translate("MainWindow", "Load Image"))
-        self.load_button.setText(_translate("MainWindow", "Process"))
+        self.load_button.setText(_translate("MainWindow", "Load image"))
+        self.process_button.setText(_translate("MainWindow", "Process"))
+
+        self.load_button.clicked.connect(self.load_image)
+        self.process_button.clicked.connect(self.process_image)  
+        self.image = None
+
+
+    def load_image(self):
+     file_path, _ = QFileDialog.getOpenFileName(
+        None, "Open Image", "", "Image Files (*.png *.jpg *.jpeg )"
+    )
+     if file_path:
+        # Load the image as grayscale
+        self.image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+        if self.image is not None:
+            QMessageBox.information(None, "Image Loaded", "Image successfully loaded.")
+            # Display the image in the ImageView widget
+            self.display_image(self.image, self.loaded_image)
+        else:
+            QMessageBox.warning(None, "Load Error", "Failed to read the image.")
+     else:
+        QMessageBox.warning(None, "Load Error", "No image selected.")
+
+    def display_image(self, image, image_view):
+     
+     if image_view is not None:
+        # Ensure the image is displayed correctly by using ImageView's setImage method
+        image_view.setImage(image.T)  # Transpose if necessary for correct orientation
+     else:
+        QMessageBox.warning(None, "Display Error", "ImageView widget is not initialized.")
+
+
+    def process_image(self):
+        if self.image is None:
+            QMessageBox.warning(None, "Process Error", "Please load an image first.")
+            return
+
+        grid_size = 64
+        threshold_value = 150
+
+        grids = self.divide_image(self.image, grid_size)
+        processed_grids = [
+            (i, j, self.process_grid(grid, threshold_value)) for i, j, grid in grids
+        ]
+        segmented_image = self.combine_grids(processed_grids, self.image.shape, grid_size)
+        result = self.highlight_tumor(self.image, segmented_image)
+
+        # Display the results
+        self.display_results(self.image, segmented_image, result)
+
+    def divide_image(self, image, grid_size):
+        h, w = image.shape
+        grids = []
+        for i in range(0, h, grid_size):
+            for j in range(0, w, grid_size):
+                grid = image[i : i + grid_size, j : j + grid_size]
+                grids.append((i, j, grid))
+        return grids
+
+    def process_grid(self, grid, threshold_value):
+        _, binary = cv2.threshold(grid, threshold_value, 255, cv2.THRESH_BINARY)
+        return binary
+
+    def combine_grids(self, grids, original_shape, grid_size):
+        h, w = original_shape
+        segmented_image = np.zeros((h, w), dtype=np.uint8)
+        for i, j, processed_grid in grids:
+            segmented_image[i : i + grid_size, j : j + grid_size] = processed_grid
+        return segmented_image
+
+    def highlight_tumor(self, original_image, segmented_image):
+        contours, _ = cv2.findContours(segmented_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        result = cv2.cvtColor(original_image, cv2.COLOR_GRAY2BGR)
+        for contour in contours:
+            if cv2.contourArea(contour) > 100:
+                x, y, w, h = cv2.boundingRect(contour)
+                cv2.rectangle(result, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        return result
+
+    def display_results(self, original, segmented, detected):
+           
+     if self.loaded_image is not None:
+        # Display the original image in the 'loaded_image' widget
+        self.loaded_image.setImage(original.T)  # Transpose if needed
+
+     if self.segmented_image is not None:
+        # Display the segmented image in the 'segmented_image' widget
+        self.segmented_image.setImage(segmented.T)  # Transpose if needed
+
+     if self.detected_image is not None:
+        # Display the detected tumors in the 'detected_image' widget
+        self.detected_image.setImage(cv2.cvtColor(detected, cv2.COLOR_BGR2RGB).transpose(1, 0, 2))
+
+    
+
 
 
 
