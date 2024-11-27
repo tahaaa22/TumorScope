@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication
 from DecompressUI import Decompression
 from CompressUI import Compression
 from AnalysisUI import Analysis
+from TumorFinder import TumorFinder
 
 
 
@@ -10,7 +11,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.current_layout = None
-        self.setupUi("Decompression")
+        self.setupUi("Analysis")
+        self.TumorFinder = TumorFinder()
         
              
         
