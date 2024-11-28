@@ -15,10 +15,17 @@ class TumorFinder:
         )
         if file_path:
             # Load the image as grayscale
+            self.clear_images()
             self.original_image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
             self.display_image(self.original_image, self.UI.loaded_image)
         else:
             QMessageBox.warning(None, "Load Error", "No image selected.")
+
+    def clear_images(self):
+        self.segmented_image = None
+        self.UI.loaded_image.clear()
+        self.UI.segmented_image.clear()
+        self.UI.detected_image.clear()
 
     def display_image(self, image, target_widget):
         """
