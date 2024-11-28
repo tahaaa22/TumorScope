@@ -18,7 +18,8 @@ class MainWindow(QMainWindow):
         analysis = Analysis()
         self.arr = [decompress, compress, analysis]
         self.setupUi("Analysis")   
-        self.tumor_finder = None
+        self.tumor_finder = TumorFinder(analysis)
+        analysis.set_manager(self.tumor_finder)
         self.compression_operations = None    
         self.decompression_operations = None  
         
