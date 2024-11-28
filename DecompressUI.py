@@ -105,6 +105,8 @@ class Decompression(object):
         self.horizontalLayout.setSpacing(0)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.leftmenu = QtWidgets.QWidget(self.centralwidget)
+        self.leftmenu.setMinimumSize(QtCore.QSize(302, 0))
+        self.leftmenu.setMaximumSize(QtCore.QSize(302, 16777215))
         self.leftmenu.setObjectName("leftmenu")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.leftmenu)
         self.verticalLayout_7.setContentsMargins(15, 0, 0, 0)

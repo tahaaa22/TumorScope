@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QFileDialog, QMessageBox,  QPushButton
-import cv2, numpy as np
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
+import cv2
+import numpy as np
 
 class TumorFinder:
     def __init__(self, ui):
