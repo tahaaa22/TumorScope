@@ -2,7 +2,7 @@ from pyqtgraph import ImageView
 #import resources_rc
 from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
-from TumorFinder import TumorFinder
+
 
 is_hidden = False
 
@@ -342,10 +342,10 @@ class Analysis(object):
         self.widget.setObjectName("widget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.load_button = QtWidgets.QPushButton(self.widget, clicked = lambda: manager.load_image())
+        self.load_button = QtWidgets.QPushButton(self.widget)
         self.load_button.setObjectName("load_button")
         self.horizontalLayout_3.addWidget(self.load_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
-        self.process_button = QtWidgets.QPushButton(self.widget, clicked = lambda: manager.process_image())
+        self.process_button = QtWidgets.QPushButton(self.widget)
         self.process_button.setObjectName("process_button")
         self.horizontalLayout_3.addWidget(self.process_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         self.verticalLayout_2.addWidget(self.widget)
@@ -356,7 +356,7 @@ class Analysis(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
-        #hiding the menu button
+        #hiding the menu
         self.menu_button.clicked.connect(self.toggle_menu)
 
     def retranslateUi(self, MainWindow):
@@ -379,7 +379,6 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Analysis()
-    manager = TumorFinder(ui)
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
