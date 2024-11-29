@@ -205,15 +205,25 @@ class Compression(object):
         self.menu_button.setIconSize(QtCore.QSize(24, 24))
         self.menu_button.setObjectName("menu_button")
         self.horizontalLayout_2.addWidget(self.menu_button, 0, QtCore.Qt.AlignLeft)
+        # Add spacer to center the label
+        self.left_spacer = QtWidgets.QSpacerItem(50, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(self.left_spacer)
+
+        # App header label
         self.appheader = QtWidgets.QLabel(self.headerframe)
         self.appheader.setMinimumSize(QtCore.QSize(630, 0))
         font = QtGui.QFont()
         font.setPointSize(28)
         font.setBold(True)
-        font.setWeight(75)
         self.appheader.setFont(font)
+        self.appheader.setText("App Header")
+        self.appheader.setAlignment(QtCore.Qt.AlignCenter)
         self.appheader.setObjectName("appheader")
         self.horizontalLayout_2.addWidget(self.appheader)
+
+        # Add another spacer for symmetry
+        self.right_spacer = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(self.right_spacer)
         self.verticalLayout.addWidget(self.headerframe, 0, QtCore.Qt.AlignTop)
         self.cardsframe = QtWidgets.QWidget(self.rightmenu)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
