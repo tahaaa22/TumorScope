@@ -13,9 +13,6 @@ class Analysis(object):
         is_hidden = not is_hidden 
         self.leftmenu.setHidden(is_hidden) 
 
-    def set_manager(self, manager):
-        self.manager = manager
-
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1221, 659)
@@ -338,10 +335,10 @@ class Analysis(object):
         self.widget.setObjectName("widget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.load_button = QtWidgets.QPushButton(self.widget, clicked=lambda: self.manager.load_image)
+        self.load_button = QtWidgets.QPushButton(self.widget)
         self.load_button.setObjectName("load_button")
         self.horizontalLayout_3.addWidget(self.load_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
-        self.process_button = QtWidgets.QPushButton(self.widget, clicked=lambda: self.manager.process_image)
+        self.process_button = QtWidgets.QPushButton(self.widget)
         self.process_button.setObjectName("process_button")
         self.horizontalLayout_3.addWidget(self.process_button, 0, QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         self.verticalLayout_2.addWidget(self.widget)
@@ -359,7 +356,7 @@ class Analysis(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "TumorScope"))
         self.label_4.setText(_translate("MainWindow", "Main Menu"))
-        self.appheader.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
+        self.appheader.setAlignment(QtCore.Qt.AlignVCenter)
         self.analysis_button.setText(_translate("MainWindow", "Analysis"))
         self.compress_button.setText(_translate("MainWindow", "Compress"))
         self.appheader.setText(_translate("MainWindow", "TumorScope"))

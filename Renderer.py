@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtGui import QIcon  
 from CompressUI import Compression
 from AnalysisUI import Analysis
 from TumorFinder import TumorFinder
@@ -16,8 +17,8 @@ class MainWindow(QMainWindow):
         self.arr = [compress, analysis]
         self.setupUi("Analysis")   
         self.tumor_finder = TumorFinder(analysis)
-        analysis.set_manager(self.tumor_finder)
         self.compression_operations = None     
+        self.setWindowIcon(QIcon("Icons/brain.png")) 
         
         
 
@@ -39,7 +40,6 @@ class MainWindow(QMainWindow):
             
         elif layout_name == "Analysis":
             self.current_layout.compress_button.clicked.connect(lambda: self.switch_layout("Compression"))
-            self.tumor_finder = TumorFinder(self.current_layout)
             self.current_layout.load_button.clicked.connect(lambda: self.tumor_finder.load_image())
             self.current_layout.process_button.clicked.connect(lambda: self.tumor_finder.process_image())
             
