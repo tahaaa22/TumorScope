@@ -31,10 +31,7 @@ class TumorFinder:
             display_data = np.float32(image.T)
         elif image.ndim == 3:
             display_data = np.float32(image.transpose(1, 0, 2))
-        else:
-            QMessageBox.warning(None, "Display Error", "Invalid image format.")
-            return
-        target_widget.setImage(display_data, autoLevels=True)
+        target_widget.setImage(display_data, autoLevels=True) # autoLevels=True automatically adjusts the brightness and contrast of the image for optimal visualization. DOES NOT affect the image, just the UI
 
     def process_image(self):
         if self.original_image is None:
@@ -55,10 +52,10 @@ class TumorFinder:
 
     def suppress_edges(self, image):
         """
-        Suppress strong edges (e.g., brain outline) using Gaussian blur and edge masking.
+        Suppress strong edges (brain outline) using Gaussian blur and edge masking.
         """
-        blurred = cv2.GaussianBlur(image, (5, 5), 0)
-        edges = cv2.Canny(blurred, 50, 150)
+        blurred = cv2.GaussianBlur(image, (5, 5), 0) # Smooth sharp edges to reduce noise and small details (kernel size = 5x5, std deviation = 0)
+        edges = cv2.Canny(blurred, 50, 150) #  identifies edges based on intensity gradients (low threshold = 50, high threshold = 150), result is a binary image where edges are highlighted in white (255) and everything else is black (0)
         edge_mask = cv2.bitwise_not(edges)
         suppressed_image = cv2.bitwise_and(image, image, mask=edge_mask)
         return suppressed_image
@@ -71,60 +68,59 @@ class TumorFinder:
         return self.process_region(image, 0, 0, h, w)
 
     def process_region(self, image, x, y, h, w):
-     """
-     Recursively divide the image region and process each part.
-     """
-     if h <= 64 or w <= 64:  # Base case: Process small regions directly
-        grid = image[y:y + h, x:x + w]
-        return self.segment_and_refine_grid(grid)
+        """
+        Recursively divide the image region and process each part.
+        """
+        if h <= 64 or w <= 64:  # Base case: Process small regions directly
+            grid = image[y:y + h, x:x + w]
+            return self.segment_and_refine_grid(grid)
 
-     # Divide the region into four quadrants
-     mid_h, mid_w = h // 2, w // 2
-    
-     # Recursively process each quadrant
-     top_left = self.process_region(image, x, y, mid_h, mid_w)
-     top_right = self.process_region(image, x + mid_w, y, mid_h, w - mid_w)
-     bottom_left = self.process_region(image, x, y + mid_h, h - mid_h, mid_w)
-     bottom_right = self.process_region(image, x + mid_w, y + mid_h, h - mid_h, w - mid_w)
+        # Divide the region into four quadrants
+        mid_h, mid_w = h // 2, w // 2
 
-    # Combine results into a single image
-     combined = np.zeros((h, w), dtype=np.uint8)
-     combined[0:mid_h, 0:mid_w] = top_left
-     combined[0:mid_h, mid_w:w] = top_right
-     combined[mid_h:h, 0:mid_w] = bottom_left
-     combined[mid_h:h, mid_w:w] = bottom_right
+        # Recursively process each quadrant
+        top_left = self.process_region(image, x, y, mid_h, mid_w)
+        top_right = self.process_region(image, x + mid_w, y, mid_h, w - mid_w)
+        bottom_left = self.process_region(image, x, y + mid_h, h - mid_h, mid_w)
+        bottom_right = self.process_region(image, x + mid_w, y + mid_h, h - mid_h, w - mid_w)
 
-     return combined
+        # Combine results into a single image
+        combined = np.zeros((h, w), dtype=np.uint8)
+        combined[0:mid_h, 0:mid_w] = top_left
+        combined[0:mid_h, mid_w:w] = top_right
+        combined[mid_h:h, 0:mid_w] = bottom_left
+        combined[mid_h:h, mid_w:w] = bottom_right
+
+        return combined
 
 
     def segment_and_refine_grid(self, grid):
         """
         Segment and refine potential tumor regions within a grid.
         """
-        # Threshold for segmentation
-        _, binary = cv2.threshold(grid, 100, 255, cv2.THRESH_BINARY)
+        # Threshold for segmentation, returns a tuple of 2 values: the first, T, is the threshold value which is trivial because we set it to 100, and the second is the image
+        _, binary = cv2.threshold(grid, 105, 255, cv2.THRESH_BINARY) # Convert the grayscale grid into a binary image to distinguish potential tumor regions (threshold = 100) Pixel intensities above 100 are set to 255 (white), while those below are set to 0 (black)
 
         # Morphological operations to clean up
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-        cleaned = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=1)
+        cleaned = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=3)
 
         # Filter regions based on properties (area, circularity)
-        contours, _ = cv2.findContours(cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) # Identify the boundaries of connected white regions (potential tumors) in the cleaned binary image
         refined_grid = np.zeros_like(grid, dtype=np.uint8)
 
         for contour in contours:
             area = cv2.contourArea(contour)
 
-            # Filter based on area
-            if 200 < area < 3000:
+            if 300 < area < 3000: # Filter out regions that are too small (<300) or too large (>3000) to be tumors
                 perimeter = cv2.arcLength(contour, True)
                 if perimeter > 0:
                     # Calculate circularity: 4π × (Area / Perimeter^2)
                     circularity = (4 * np.pi * area) / (perimeter ** 2)
-                    if circularity > 0.5:  # Tumor regions tend to be circular
-                        cv2.drawContours(refined_grid, [contour], -1, 255, thickness=cv2.FILLED)
+                    if circularity > 0.6:  # Tumors are likely to have a circularity greater than 0.6 (roughly circular)
+                        cv2.drawContours(refined_grid, [contour], -1, 255, thickness=cv2.FILLED) 
 
-        return refined_grid
+        return refined_grid # A binary image where only the regions that are likely to be tumors are white. All other regions are black.
 
     def highlight_tumor(self, original_image, segmented_image):
         """
@@ -136,7 +132,7 @@ class TumorFinder:
         result = cv2.cvtColor(original_image, cv2.COLOR_GRAY2BGR)
         for contour in contours:
             x, y, w, h = cv2.boundingRect(contour)
-            cv2.rectangle(result, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(result, (x, y), (x + w + 20, y + h + 20), (0, 255, 0), 2)
         return result
 
     def display_results(self, original, segmented, detected):
