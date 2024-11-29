@@ -26,7 +26,7 @@ class Compression(object):
 "color:#000;\n"
 "border:none;\n"
 "}\n"
-"#load_button, #compression_button {\n"
+"#load_button, #compression_button, #reconstruction_button {\n"
 "    background-color: #3498db;  /* Default button color */\n"
 "    color: white;\n"
 "    border-radius: 5px;\n"
@@ -47,7 +47,7 @@ class Compression(object):
 "background-color:#eff9fe;\n"
 "border-color: rgb(0, 255, 255);\n"
 "}\n"
-"#analysis_button, #compress_button,#load_button, #compression_button, #decompress_button, #confirmButton{\n"
+"#analysis_button, #compress_button,#load_button, #compression_button, #reconstruction_button, #decompress_button, #confirmButton{\n"
 "padding:10px 5px;\n"
 "text-align:left;\n"
 "font: 18px;\n"
@@ -97,7 +97,7 @@ class Compression(object):
 "color:#2596be;\n"
 "}\n"
 "\n"
-"#SearchFrame, #load_button, #compression_button, #menu_button{\n"
+"#SearchFrame, #load_button, #compression_button, #reconstruction_button, #menu_button{\n"
 "border-radius: 10px;\n"
 "border: 2px solid #2596be;\n"
 "}")
@@ -308,13 +308,13 @@ class Compression(object):
         self.frame_12.setObjectName("frame_12")
         self.verticalLayout_17 = QtWidgets.QVBoxLayout(self.frame_12)
         self.verticalLayout_17.setObjectName("verticalLayout_17")
-        self.dicom_image = ImageView(self.frame_12)
-        self.dicom_image.ui.roiBtn.hide()
-        self.dicom_image.ui.menuBtn.hide()
-        self.dicom_image.ui.histogram.hide()
-        self.dicom_image.setMinimumSize(QtCore.QSize(400, 400))
-        self.dicom_image.setObjectName("dicom_image")
-        self.verticalLayout_17.addWidget(self.dicom_image)
+        self.compressed_image = ImageView(self.frame_12)
+        self.compressed_image.ui.roiBtn.hide()
+        self.compressed_image.ui.menuBtn.hide()
+        self.compressed_image.ui.histogram.hide()
+        self.compressed_image.setMinimumSize(QtCore.QSize(400, 400))
+        self.compressed_image.setObjectName("compressed_image")
+        self.verticalLayout_17.addWidget(self.compressed_image)
         self.frame_11 = QtWidgets.QFrame(self.frame_12)
         self.frame_11.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_11.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -340,12 +340,12 @@ class Compression(object):
         self.label_3.setFont(font)
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_6.addWidget(self.label_3)
-        self.dicom_size = QtWidgets.QLabel(self.frame_11)
+        self.compressed_size = QtWidgets.QLabel(self.frame_11)
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.dicom_size.setFont(font)
-        self.dicom_size.setObjectName("dicom_size")
-        self.horizontalLayout_6.addWidget(self.dicom_size)
+        self.compressed_size.setFont(font)
+        self.compressed_size.setObjectName("compressed_size")
+        self.horizontalLayout_6.addWidget(self.compressed_size)
         self.verticalLayout_5.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
@@ -355,12 +355,12 @@ class Compression(object):
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_7.addWidget(self.label_5)
-        self.dicom_extension = QtWidgets.QLabel(self.frame_11)
+        self.compressed_extension = QtWidgets.QLabel(self.frame_11)
         font = QtGui.QFont()
         font.setPointSize(10)
-        self.dicom_extension.setFont(font)
-        self.dicom_extension.setObjectName("dicom_extension")
-        self.horizontalLayout_7.addWidget(self.dicom_extension)
+        self.compressed_extension.setFont(font)
+        self.compressed_extension.setObjectName("compressed_extension")
+        self.horizontalLayout_7.addWidget(self.compressed_extension)
         self.verticalLayout_5.addLayout(self.horizontalLayout_7)
         self.verticalLayout_17.addWidget(self.frame_11)
         self.verticalLayout_13.addWidget(self.frame_12)
@@ -381,6 +381,11 @@ class Compression(object):
         self.compression_button.setMinimumSize(QtCore.QSize(0, 0))
         self.compression_button.setObjectName("compression_button")
         self.horizontalLayout_3.addWidget(self.compression_button, 0, QtCore.Qt.AlignHCenter)
+
+        self.reconstruction_button = QtWidgets.QPushButton(self.widget)
+        self.reconstruction_button.setMinimumSize(QtCore.QSize(0, 0))
+        self.reconstruction_button.setObjectName("reconstruction_button")
+        self.horizontalLayout_3.addWidget(self.reconstruction_button, 0, QtCore.Qt.AlignHCenter)
         self.verticalLayout_2.addWidget(self.widget)
         self.verticalLayout.addWidget(self.mainframe)
         self.horizontalLayout.addWidget(self.rightmenu)
@@ -400,16 +405,15 @@ class Compression(object):
         self.appheader.setText(_translate("MainWindow", "TumorScope"))
         self.EMGlabel.setText(_translate("MainWindow", "Normal Image"))
         self.label.setText(_translate("MainWindow", "Original Size:"))
-        self.normal_size.setText(_translate("MainWindow", "500KB"))
         self.label_2.setText(_translate("MainWindow", "Extension:"))
         self.normal_extension.setText(_translate("MainWindow", "PNG"))
-        self.filterflex.setText(_translate("MainWindow", "DICOM Image"))
-        self.label_3.setText(_translate("MainWindow", "Original Size:"))
-        self.dicom_size.setText(_translate("MainWindow", "400KB"))
+        self.filterflex.setText(_translate("MainWindow", "Compressed Image"))
+        self.label_3.setText(_translate("MainWindow", "Compressed Size:"))
         self.label_5.setText(_translate("MainWindow", "Extension:"))
-        self.dicom_extension.setText(_translate("MainWindow", "DCM"))
+        self.compressed_extension.setText(_translate("MainWindow", "Zlib"))
         self.load_button.setText(_translate("MainWindow", "Load Image"))
         self.compression_button.setText(_translate("MainWindow", "Compress"))
+        self.reconstruction_button.setText(_translate("MainWindow", "Reconstruct"))
 
 
 

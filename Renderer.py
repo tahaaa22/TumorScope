@@ -38,20 +38,21 @@ class MainWindow(QMainWindow):
             self.current_layout.analysis_button.clicked.connect(lambda: self.switch_layout("Analysis"))
             self.current_layout.compress_button.clicked.connect(lambda: self.switch_layout("Compression"))
             self.decompression_operations = DecompressionOperations(self.current_layout)
-            self.current_layout.decompress_button.clicked.connect(lambda: self.decompression_operations.decompress())
+            self.current_layout.decompression_button.clicked.connect(lambda: self.decompression_operations.decompress())
             self.current_layout.load_button.clicked.connect(lambda: self.decompression_operations.load())
             
         elif layout_name == "Compression":
             self.current_layout.decompress_button.clicked.connect(lambda: self.switch_layout("Decompression"))
             self.current_layout.analysis_button.clicked.connect(lambda: self.switch_layout("Analysis"))
-            self.compression_operations = CompressionOperations(self.current_layout)  #object of CompressionOperations, user it to connect functions
-            self.current_layout.compress_button.clicked.connect(lambda: self.compression_operations.compress())
-            self.current_layout.load_button.clicked.connect(lambda: self.compression_operations.load())
+            self.compression_operations = CompressionOperations(self.current_layout)
+            self.current_layout.load_button.clicked.connect(lambda: self.compression_operations.load_image())
+            self.current_layout.compression_button.clicked.connect(lambda: self.compression_operations.compress_image())
+            self.current_layout.reconstruction_button.clicked.connect(lambda: self.compression_operations.reconstruct_image())
             
         elif layout_name == "Analysis":
             self.current_layout.compress_button.clicked.connect(lambda: self.switch_layout("Compression"))
             self.current_layout.decompress_button.clicked.connect(lambda: self.switch_layout("Decompression"))
-            self.tumor_finder = TumorFinder(self.current_layout) #object of tumor finder, user it to connect functions
+            self.tumor_finder = TumorFinder(self.current_layout)
             self.current_layout.load_button.clicked.connect(lambda: self.tumor_finder.load_image())
             self.current_layout.process_button.clicked.connect(lambda: self.tumor_finder.process_image())
             
