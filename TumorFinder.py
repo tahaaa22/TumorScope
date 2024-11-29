@@ -124,15 +124,25 @@ class TumorFinder:
 
     def highlight_tumor(self, original_image, segmented_image):
         """
-        Highlight tumor regions on the original grayscale image.
+        Highlight tumor regions on the original grayscale image with improved precision.
         """
+        # Find contours in the segmented binary image
         contours, _ = cv2.findContours(
             segmented_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
+        
+        # Convert grayscale image to BGR for color highlighting
         result = cv2.cvtColor(original_image, cv2.COLOR_GRAY2BGR)
+        
         for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            cv2.rectangle(result, (x, y), (x + w + 20, y + h + 20), (0, 255, 0), 2)
+            # Compute minimum enclosing circle
+            (cx, cy), radius = cv2.minEnclosingCircle(contour)
+            
+            # Ensure the radius is large enough to draw
+            if radius > 5:
+                # Draw a circle around the tumor
+                cv2.circle(result, (int(cx), int(cy)), int(radius + 2), (0, 255, 0), 2)
+        
         return result
 
     def display_results(self, original, segmented, detected):
