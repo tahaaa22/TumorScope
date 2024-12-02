@@ -121,6 +121,18 @@ class TumorFinder:
                         cv2.drawContours(refined_grid, [contour], -1, 255, thickness=cv2.FILLED) 
 
         return refined_grid # A binary image where only the regions that are likely to be tumors are white. All other regions are black.
+    
+    # def divide_and_conquer(self, image):
+    #     """
+    #     Directly process the whole image without dividing into regions.
+    #     """
+    #     return self.segment_and_refine_grid(image)  # Call the segmentation function directly.
+
+    # def process_region(self, image, x, y, h, w):
+    #     """
+    #     This function is no longer used in this case.
+    #     """
+    #     pass
 
     def highlight_tumor(self, original_image, segmented_image):
         """
